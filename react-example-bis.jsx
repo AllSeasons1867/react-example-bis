@@ -131,12 +131,6 @@ const PostDataExample = () => {
 
   useEffect(() => {
     fetchPosts()
-
-    const fetchInterval = setInterval(() => {
-      fetchPosts()
-    },10000)
-
-    return () => clearInterval(fetchInterval)
   },[])
 
   useEffect(() => {
