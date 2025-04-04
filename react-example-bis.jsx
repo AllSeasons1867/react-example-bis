@@ -82,7 +82,7 @@ const PostDataExample = () => {
         return (
           prevValue.filter((element, index) => {
             return (
-              element.id !== id
+              element.id !== data.id
             )
           })
         )
