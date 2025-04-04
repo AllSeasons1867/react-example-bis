@@ -19,8 +19,13 @@ const PostDataExample = () => {
         try {
           const { data } = await axios.post(url, post, {headers: { "Content-Type": "application/json" }})
           console.log("Created post: ", data)
+          setPosts((prevValue) => {
+            return (
+              [...prevValue, data]
+            )
+          })
           setPost({title: "", body: ""})
-          fetchPosts()
+          textFocus()
         } catch (error) {
           console.log("Error creating post: ", error)
         } 
@@ -28,9 +33,18 @@ const PostDataExample = () => {
           try {
             const { data } = await axios.put(url+"/"+post.id, post, {headers: {"Content-Type": "application/json"}})
             console.log("Edited post: ", data)
+            setPosts((prevValue) => {
+              return (
+                prevValue.map((element) => {
+                  return (
+                    element.id === data.id ? data : element
+                  )
+                })
+              )
+            })
             setPost({title: "", body: ""})
             setEditState(null)
-            fetchPosts()
+            textFocus()
           } catch (error) {
             console.log("Error editing post: ", error)
           }
@@ -64,7 +78,16 @@ const PostDataExample = () => {
     try {
       const { data } = await axios.delete(url+"/"+id, {headers: {"Content-Type": "application/json"}})
       console.log("Deleted post: ", data)
-      fetchPosts()
+      setPosts((prevValue) => {
+        return (
+          prevValue.filter((element, index) => {
+            return (
+              element.id !== id
+            )
+          })
+        )
+      })
+      textFocus()
     } catch (error) {
       console.log("Error deleting post: ", error)
     }
@@ -108,6 +131,12 @@ const PostDataExample = () => {
 
   useEffect(() => {
     fetchPosts()
+
+    const fetchInterval = setInterval(() => {
+      fetchPosts()
+    },10000)
+
+    return () => clearInterval(fetchInterval)
   },[])
 
   useEffect(() => {
@@ -119,7 +148,7 @@ const PostDataExample = () => {
   if (isLoading) {
     return (
       <>
-        <h1>Loading users...</h1>
+        <h1>Loading posts...</h1>
       </>
     )
   }
@@ -127,7 +156,7 @@ const PostDataExample = () => {
   if (isError) {
     return (
       <>
-        <h1>Error loading users...</h1>
+        <h1>Error loading posts...</h1>
       </>
     )
   }
